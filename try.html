@@ -8,11 +8,26 @@
             document.addEventListener("DOMContentLoaded",function(){
 
                 alert('起動OK');
-                let ch = new ccxt.coincheck();
+                const proxy = "https://cors-anywhere.herokuapp.com/"; 
+                let ch = new ccxt.coincheck({ proxy: proxy });
                 console.log(ch.has);
+                
+                ch.fetchOrderBook('BTC/JPY').then((ticker) => {
+                    const text = JSON.stringify(ticker);
+                    console.log(typeof(text))
+                    document.getElementById("result").innerHTML = ticker.bids[0][0];
+                })
+                .catch((e) => {
+                    document.getElementById("result").innerHTML = 'error';
+                });
+                
+
+                
+
             });
         </script>
 
         <h1>test</h1>
+        <div id="result">no result</div>
 
     </html>
