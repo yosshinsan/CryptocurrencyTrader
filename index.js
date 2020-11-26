@@ -6,7 +6,7 @@ $(function(){
     let secretKey = '';
     let intervalProcessing;
     let intervalMilliSecond = 5000;
-    let symbolToTrade = 'BTC/JPY'
+    let pairToTrade = 'BTC/JPY'
 
     //Startボタンクリック
     $('#yoshi_start_button').click(async() => {       
@@ -27,7 +27,7 @@ $(function(){
             
             document.getElementById("yoshi_message").innerHTML = '処理中です';
 
-            await fetchLastContractPrice(symbolToTrade).then(function(value){
+            await fetchLastContractPrice(pairToTrade).then(function(value){
                 document.getElementById("result").innerHTML = value;
             });
     
@@ -41,12 +41,12 @@ $(function(){
         /**
          *最後の約定価格を取得する
          *
-         * @param {String} symbol 価格を取得するシンボル(ex:'BTC/JPY')
+         * @param {String} pair 価格を取得するペア(ex:'BTC/JPY')
          * @returns {Object} 成功した場合：価格　失敗した場合：exception
          */
-        function fetchLastContractPrice(symbol) {
+        function fetchLastContractPrice(pair) {
             return new Promise((resolve,reject) => {
-                ch.fetchTicker(symbol).then((ticker) => {
+                ch.fetchTicker(pair).then((ticker) => {
                     resolve(ticker.last);
                 })
                 .catch((e) => {
@@ -60,7 +60,7 @@ $(function(){
     $('#yoshi_stop_button').click(async() => {    
         clearInterval(intervalProcessing);
     });
-
+s
     //注文残の確認
 
         //注文残があればなにもしない
