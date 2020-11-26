@@ -15,13 +15,15 @@ $(function(){
         apiKey = $('#api-key').val();
         secretKey = $('#secret-key').val();
         
-        //const proxy = "https://cors-anywhere.herokuapp.com/"; 
-        //let ch = new ccxt.coincheck({ proxy: proxy });
+        const proxy = "https://cors-anywhere.herokuapp.com/"; 
+        let ch = new ccxt.coincheck({ proxy: proxy });
         
-        //ch.apiKey='';
-        //ch.secret='';
+        ch.apiKey = apiKey;
+        ch.secret = secretKey;
     
-        console.log(ch.has);
+        let val = await fetchNumberOfOpenOrders(pairToTrade);
+        console.log(val);
+/*         console.log(ch.has);
 
         intervalProcessing = setInterval(async() => {
             
@@ -33,7 +35,7 @@ $(function(){
     
             document.getElementById("yoshi_message").innerHTML = '繰り返します';
         
-        }, intervalMilliSecond);
+        }, intervalMilliSecond); */
         
         
 
@@ -55,12 +57,31 @@ $(function(){
             });
         }
 
+        /**
+         *最後の約定価格を取得する
+         *
+         * @param {String} pair 価格を取得するペア(ex:'BTC/JPY')
+         * @returns {Object} 成功した場合：価格　失敗した場合：exception
+         */
+        function fetchNumberOfOpenOrders(pair) {
+            return new Promise((resolve,reject) => {
+                ch.fetchOpenOrders(pair).then((ticker) => {
+                    resolve(ticker);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
+
+
+
     })
 
     $('#yoshi_stop_button').click(async() => {    
         clearInterval(intervalProcessing);
     });
-s
+
     //注文残の確認
 
         //注文残があればなにもしない
