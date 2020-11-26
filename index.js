@@ -4,34 +4,62 @@ $(function(){
     let ch = new ccxt.coincheck({ proxy: proxy });
     let apiKey = '';
     let secretKey = '';
+    let intervalProcessing;
+    let intervalMilliSecond = 5000;
+    let symbolToTrade = 'BTC/JPY'
 
     //Startボタンクリック
-    $('#yoshi_start_button').click(function(){       
+    $('#yoshi_start_button').click(async() => {       
     
         alert('起動OK');
         apiKey = $('#api-key').val();
         secretKey = $('#secret-key').val();
         
-        alert(apiKey);
-        alert(secretKey);
         //const proxy = "https://cors-anywhere.herokuapp.com/"; 
         //let ch = new ccxt.coincheck({ proxy: proxy });
         
         //ch.apiKey='';
         //ch.secret='';
-        
+    
         console.log(ch.has);
+
+        intervalProcessing = setInterval(async() => {
+            
+            document.getElementById("yoshi_message").innerHTML = '処理中です';
+
+            await fetchLastContractPrice(symbolToTrade).then(function(value){
+                document.getElementById("result").innerHTML = value;
+            });
+    
+            document.getElementById("yoshi_message").innerHTML = '繰り返します';
         
-//                ch.createLimitBuyOrder('BTC/JPY',0.01,1800000).then((ticker) => {
-//                   const text = JSON.stringify(ticker);
-//                    console.log(typeof(text))
-//                    //document.getElementById("result").innerHTML = ticker.bids[0][0];
-//                    document.getElementById("result").innerHTML = text;
-//                })
-//                .catch((e) => {
-//                    document.getElementById("result").innerHTML = e;
-//                });
+        }, intervalMilliSecond);
+        
+        
+
+        
+        /**
+         *最後の約定価格を取得する
+         *
+         * @param {String} symbol 価格を取得するシンボル(ex:'BTC/JPY')
+         * @returns {Object} 成功した場合：価格　失敗した場合：exception
+         */
+        function fetchLastContractPrice(symbol) {
+            return new Promise((resolve,reject) => {
+                ch.fetchTicker(symbol).then((ticker) => {
+                    resolve(ticker.last);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
+
     })
+
+    $('#yoshi_stop_button').click(async() => {    
+        clearInterval(intervalProcessing);
+    });
 
     //注文残の確認
 
