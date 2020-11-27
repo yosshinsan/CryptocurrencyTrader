@@ -20,8 +20,11 @@ $(function(){
         
         ch.apiKey = apiKey;
         ch.secret = secretKey;
+
+        console.log(ch.has);
     
-        let val = await fetchNumberOfOpenOrders(pairToTrade);
+        let val = await fetchLastOrder(pairToTrade);
+        document.getElementById("result").innerHTML = val;
         console.log(val);
 /*         console.log(ch.has);
 
@@ -58,15 +61,30 @@ $(function(){
         }
 
         /**
-         *最後の約定価格を取得する
-         *
-         * @param {String} pair 価格を取得するペア(ex:'BTC/JPY')
-         * @returns {Object} 成功した場合：価格　失敗した場合：exception
+         *未決済注文を取得する
+         *未決済注文がない場合、リターンするオブジェクトは空(Length=0)となる
+         * @returns {Object} 成功した場合：未決済注文情報　失敗した場合：exception
          */
-        function fetchNumberOfOpenOrders(pair) {
+        function fetchOpenOrders() {
             return new Promise((resolve,reject) => {
-                ch.fetchOpenOrders(pair).then((ticker) => {
+                ch.fetchOpenOrders().then((ticker) => {
                     resolve(ticker);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
+
+        /**
+         *最後の取引データを取得する
+         *
+         * @returns {Object} 成功した場合：最後の取引データ　失敗した場合：exception
+         */
+        function fetchLastOrder() {
+            return new Promise((resolve,reject) => {
+                ch.private_get_exchange_orders_transactions().then((ticker) => {
+                    resolve(ticker.transactions[0]);
                 })
                 .catch((e) => {
                     reject(e);
