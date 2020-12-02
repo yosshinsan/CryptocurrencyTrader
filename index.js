@@ -7,6 +7,11 @@ $(function(){
     let intervalProcessing;
     let intervalMilliSecond = 5000;
     let pairToTrade = 'BTC/JPY'
+    let pairToTradeOnExchange = 'btc_jpy'
+    let sideBuy = 'buy';
+    let sideSell = 'sell';
+    let addPrice = 5000;
+    let subtractPrice = 5000;
 
     //Startボタンクリック
     $('#yoshi_start_button').click(async() => {       
@@ -21,11 +26,46 @@ $(function(){
         ch.apiKey = apiKey;
         ch.secret = secretKey;
 
-        console.log(ch.has);
-    
-        let val = await fetchLastOrder(pairToTrade);
-        document.getElementById("result").innerHTML = val;
-        console.log(val);
+        //console.log(ch.has);
+
+        //mikessai wo syutoku
+        let openOrders = await fetchOpenOrders();
+
+        //mikessai ga nakereba syori keizoku
+        if(openOrders.length === 0){
+            //saigo no yakuzyo wo syutoku suru
+            let lastOrder = await fetchLastOrder(pairToTradeOnExchange);
+            console.log(lastOrder);    
+
+            let lastSide = lastOrder.side;
+            if(lastSide === sideBuy){
+                //売り注文を入れる
+                    //最後の取得価格、取得量を取得
+                    //最後の取得価格+円で売り注文   
+                let lastPrice = lastSide.rate;
+                let lastAmount = lastSide.funds.btc;
+                let orderPrice = lastPrice + addPrice;
+            
+            }
+
+            if(lastSide === sideSell){
+                //買い注文を入れる
+                    //現在の価格を取得
+                    //現在の価格マイナス?円で買い注文
+                    //注文量は日本円残高から計算
+                let lastPrice = await fetchLastContractPrice(pairToTrade);
+                let orderPrice = lastPrice - subtractPrice;
+                let jpyBalance = await fetchJpyBalance();
+            }
+
+
+        }
+
+
+
+        //let val = await fetchLastOrder(pairToTradeOnExchange);
+        //document.getElementById("result").innerHTML = val;
+        //console.log(val);
 /*         console.log(ch.has);
 
         intervalProcessing = setInterval(async() => {
@@ -81,10 +121,10 @@ $(function(){
          *
          * @returns {Object} 成功した場合：最後の取引データ　失敗した場合：exception
          */
-        function fetchLastOrder() {
+        function fetchLastOrder(pairOnExchange) {
             return new Promise((resolve,reject) => {
                 ch.private_get_exchange_orders_transactions().then((ticker) => {
-                    resolve(ticker.transactions[0]);
+                    resolve(ticker.transactions.find(tran => tran.pair === pairOnExchange));
                 })
                 .catch((e) => {
                     reject(e);
@@ -92,6 +132,21 @@ $(function(){
             });
         }
 
+        /**
+         *nihonen no zandaka wo syutoku suru
+         *
+         * @returns {Object} 成功した場合：最後の取引データ　失敗した場合：exception
+         */
+        function fetchJpyBalance() {
+            return new Promise((resolve,reject) => {
+                ch.private_get_accounts_balance().then((balance) => {
+                    resolve(balance.jpy);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
 
 
     })
