@@ -12,6 +12,7 @@ $(function(){
     let sideSell = 'sell';
     let addPrice = 5000;
     let subtractPrice = 5000;
+    let excludeJpyBalance = 30000;
 
     //Startボタンクリック
     $('#yoshi_start_button').click(async() => {       
@@ -26,9 +27,11 @@ $(function(){
         ch.apiKey = apiKey;
         ch.secret = secretKey;
 
+        await await createLimitBuyOrder(pairToTrade,0.005,1900000);
+
         //console.log(ch.has);
 
-        //mikessai wo syutoku
+/*         //mikessai wo syutoku
         let openOrders = await fetchOpenOrders();
 
         //mikessai ga nakereba syori keizoku
@@ -56,10 +59,14 @@ $(function(){
                 let lastPrice = await fetchLastContractPrice(pairToTrade);
                 let orderPrice = lastPrice - subtractPrice;
                 let jpyBalance = await fetchJpyBalance();
+                jpyBalance = jpyBalance - excludeJpyBalance;
+                let orderAmount = jpyBalance / orderPrice;
+                orderAmount = Math.floor(orderAmount * 1000) / 1000;
+                console.log(orderAmount);
             }
 
 
-        }
+        } */
 
 
 
@@ -81,6 +88,22 @@ $(function(){
         }, intervalMilliSecond); */
         
         
+        /**
+         *買い注文する
+         *
+         * @param {String} pair 価格を取得するペア(ex:'BTC/JPY')
+         * @returns {Object} 成功した場合：価格　失敗した場合：exception
+         */
+        function createLimitBuyOrder(pair,amount,price) {
+            return new Promise((resolve,reject) => {
+                ch.createLimitBuyOrder(pair,amount,price).then((result) => {
+                    resolve(result);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
 
         
         /**
