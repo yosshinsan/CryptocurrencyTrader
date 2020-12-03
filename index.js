@@ -27,7 +27,7 @@ $(function(){
         ch.apiKey = apiKey;
         ch.secret = secretKey;
 
-        await await createLimitBuyOrder(pairToTrade,0.005,1900000);
+        //await await createLimitBuyOrder(pairToTrade,0.005,2010000);
 
         //console.log(ch.has);
 
@@ -105,7 +105,24 @@ $(function(){
             });
         }
 
-        
+                /**
+         *uri注文する
+         *
+         * @param {String} pair 価格を取得するペア(ex:'BTC/JPY')
+         * @returns {Object} 成功した場合：価格　失敗した場合：exception
+         */
+        function createLimitSellOrder(pair,amount,price) {
+            return new Promise((resolve,reject) => {
+                ch.createLimitSellOrder(pair,amount,price).then((result) => {
+                    resolve(result);
+                })
+                .catch((e) => {
+                    reject(e);
+                });
+            });
+        }
+
+
         /**
          *最後の約定価格を取得する
          *
