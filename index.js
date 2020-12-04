@@ -27,20 +27,22 @@ $(function(){
         ch.apiKey = apiKey;
         ch.secret = secretKey;
 
-        //await await createLimitBuyOrder(pairToTrade,0.005,2010000);
-        let lastOrder = await fetchLastOrder(pairToTradeOnExchange);
-        console.log(lastOrder);
+        console.log(getDateTimeDisp());
 
-/*         //mikessai wo syutoku
+
+
+/*         //未決済注文を取得
         let openOrders = await fetchOpenOrders();
 
-        //mikessai ga nakereba syori keizoku
+        //未決済注文がなければ処理を行う
         if(openOrders.length === 0){
-            //saigo no yakuzyo wo syutoku suru
+            //最後に約定した注文を取得する
             let lastOrder = await fetchLastOrder(pairToTradeOnExchange);
             console.log(lastOrder);    
 
             let lastSide = lastOrder.side;
+            
+            //最後の約定が買いの場合
             if(lastSide === sideBuy){
                 //売り注文を入れる
                     //最後の取得価格、取得量を取得
@@ -48,13 +50,14 @@ $(function(){
                 let lastPrice = lastSide.rate;
                 let lastAmount = lastSide.funds.btc;
                 let orderPrice = lastPrice + addPrice;
-            
+                //await createLimitSellOrder(pairToTrade,lastAmount,orderPrice);
             }
 
+            //最後の約定が売りの場合
             if(lastSide === sideSell){
                 //買い注文を入れる
                     //現在の価格を取得
-                    //現在の価格マイナス?円で買い注文
+                    //現在の価格-円で買い注文
                     //注文量は日本円残高から計算
                 let lastPrice = await fetchLastContractPrice(pairToTrade);
                 let orderPrice = lastPrice - subtractPrice;
@@ -62,14 +65,13 @@ $(function(){
                 jpyBalance = jpyBalance - excludeJpyBalance;
                 let orderAmount = jpyBalance / orderPrice;
                 orderAmount = Math.floor(orderAmount * 1000) / 1000;
+                //await createLimitBuyOrder(pairToTrade,orderAmount,orderPrice);
                 console.log(orderAmount);
             }
 
 
-        } */
-
-
-
+        }
+ */
         //let val = await fetchLastOrder(pairToTradeOnExchange);
         //document.getElementById("result").innerHTML = val;
         //console.log(val);
@@ -188,27 +190,20 @@ $(function(){
             });
         }
 
+        function getDateTimeDisp(){
+            return window.Date().toLocaleString();
+        }
+
 
     })
+
+
+
 
     $('#yoshi_stop_button').click(async() => {    
         clearInterval(intervalProcessing);
     });
 
-    //注文残の確認
-
-        //注文残があればなにもしない
-
-        //注文残がない場合
-            //最後の約定が買いの場合
-                //売り注文を入れる
-                    //最後の取得価格、取得量を取得
-                    //最後の取得価格+円で売り注文
-            //最後の約定が売りの場合
-                //買い注文を入れる
-                    //現在の価格を取得
-                    //現在の価格マイナス?円で買い注文
-                    //注文量は日本円残高から計算
 
 
 
