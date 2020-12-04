@@ -28,8 +28,8 @@ $(function(){
         ch.secret = secretKey;
 
         //await await createLimitBuyOrder(pairToTrade,0.005,2010000);
-
-        //console.log(ch.has);
+        let lastOrder = await fetchLastOrder(pairToTradeOnExchange);
+        console.log(lastOrder);
 
 /*         //mikessai wo syutoku
         let openOrders = await fetchOpenOrders();
