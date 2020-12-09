@@ -15,20 +15,29 @@ $(function(){
     let excludeJpyBalance = 30000;
 
     //Startボタンクリック
-    $('#yoshi_start_button').click(async() => {       
+    $('#yoshi_start_button').click(async() => {       　
     
+        //参考：https://zenn.dev/kota_yata/articles/6baecf59f0b3a39ea5a6
+        //参考：https://qiita.com/pentamania/items/ada07c45d4e5cc139c03　⇒ 2020/12/09時点では情報が古い 書き直し予定ありとのこと
+
         alert('起動OK');
-        apiKey = $('#api-key').val();
-        secretKey = $('#secret-key').val();
-        
-        const proxy = "https://cors-anywhere.herokuapp.com/"; 
-        let ch = new ccxt.coincheck({ proxy: proxy });
-        
-        ch.apiKey = apiKey;
-        ch.secret = secretKey;
+        [fileHandle] = await window.showOpenFilePicker();
+        let file = await fileHandle.getFile();
+        let fileContents = await file.text(); 
+        let writeble = await fileHandle.createWritable();
+        //await writeble.write(fileContents + '\nかきくけこ');
+        await writeble.close(); 
 
-        console.log(getDateTimeDisp());
-
+        intervalProcessing = setInterval(async() => {
+            
+            fileContents = fileContents + '\nかきくけこ' 
+          
+            let writeble = await fileHandle.createWritable();
+            await writeble.write(fileContents);
+            await writeble.close(); 
+        
+        }, 5000);
+        
 
 
 /*         //未決済注文を取得
